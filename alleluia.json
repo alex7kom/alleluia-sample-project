@@ -1,0 +1,254 @@
+{
+  "destination": "output",
+  "title": "Alleluia Sample Project",
+  "description": "Just another blog",
+  "about": "Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.",
+  "url": "http://example.com",
+  "links": {
+    "GitHub": "http://github.com/",
+    "Twitter": "http://twitter.com/",
+    "Facebook": "http://facebook.com/"
+  },
+  "pipelines": [
+    {
+      "name": "pre",
+      "discardData": true,
+      "pipes": [
+        { "pipe": "copyFiles", "from": "static", "to": "/" }
+      ]
+    },
+
+    {
+      "name": "posts",
+      "pipes": [
+        { "pipe": "loadPosts" },
+        {
+          "tee": [
+            { "filter": "markdown", "input": "content" },
+            { "filter": "convert_date", "input": "date" },
+            { "pipe": "makeLink", "template": "/{{ slug }}/" },
+            { "pipe": "makeFilePath" }
+          ]
+        },
+        { "pipe": "sort", "by": "date", "order": "asc" }
+      ]
+    },
+
+    {
+      "name": "categoriesIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "groupByTerm", "type": "category", "prop": "categories" }
+      ]
+    },
+
+    {
+      "name": "tagsIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "groupByTerm", "type": "tag", "prop": "tags" }
+      ]
+    },
+
+    {
+      "name": "yearlyIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "groupByDate", "type": "yearly" }
+      ]
+    },
+
+    {
+      "name": "monthlyIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "groupByDate", "type": "monthly" }
+      ]
+    },
+
+    {
+      "name": "dailyIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "groupByDate", "type": "daily" }
+      ]
+    },
+
+    {
+      "name": "pages",
+      "pipes": [
+        { "pipe": "loadPages" },
+        {
+          "tee": [
+            { "filter": "markdown", "input": "content" },
+            { "filter": "convert_date", "input": "date" },
+            { "pipe": "makeLink", "template": "/{{ path }}/" },
+            { "pipe": "makeFilePath" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "savePosts",
+      "pipes": [
+        { "data": "posts" },
+        {
+          "tee": [
+            { "pipe": "renderTemplate", "template": "post" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "savePages",
+      "pipes": [
+        { "data": "pages" },
+        {
+          "tee": [
+            { "pipe": "renderTemplate", "template": "page" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "mainIndex",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "paginate", "limit": 2 },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "saveTagsIndex",
+      "pipes": [
+        { "data": "tagsIndex" },
+        {
+          "tee": [
+            { "pipe": "paginate", "limit": 2 }
+          ]
+        },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/tag/{{slug}}/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "makeLink", "property": "prefix", "template": "/tag/{{slug}}" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "saveCategoriesIndex",
+      "pipes": [
+        { "data": "categoriesIndex" },
+        {
+          "tee": [
+            { "pipe": "paginate", "limit": 2 }
+          ]
+        },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/category/{{slug}}/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "makeLink", "property": "prefix", "template": "/category/{{slug}}" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "saveYearlyIndex",
+      "pipes": [
+        { "data": "yearlyIndex" },
+        {
+          "tee": [
+            { "pipe": "paginate", "limit": 2 }
+          ]
+        },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/date/{{slug}}/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "makeLink", "property": "prefix", "template": "/date/{{slug}}" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "saveMonthlyIndex",
+      "pipes": [
+        { "data": "monthlyIndex" },
+        {
+          "tee": [
+            { "pipe": "paginate", "limit": 2 }
+          ]
+        },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/date/{{slug}}/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "makeLink", "property": "prefix", "template": "/date/{{slug}}" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "saveDailyIndex",
+      "pipes": [
+        { "data": "dailyIndex" },
+        {
+          "tee": [
+            { "pipe": "paginate", "limit": 2 }
+          ]
+        },
+        {
+          "tee": [
+            { "pipe": "makeLink", "template": "/date/{{slug}}/{% if currentPage > 1 %}page/{{ currentPage }}{% endif %}" },
+            { "pipe": "makeFilePath" },
+            { "pipe": "makeLink", "property": "prefix", "template": "/date/{{slug}}" },
+            { "pipe": "renderTemplate", "template": "list" },
+            { "pipe": "saveToFile" }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "feed",
+      "pipes": [
+        { "data": "posts" },
+        { "pipe": "limit", "limit": 10 },
+        { "pipe": "wrap" },
+        { "pipe": "makeLink", "template": "/feed" },
+        { "pipe": "makeFilePath" },
+        { "#pipe": "logDataAndExit" },
+        { "pipe": "renderTemplate", "template": "rss" },
+        { "pipe": "saveToFile" }
+      ]
+    }
+
+  ]
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>
+    {% if page.title %}
+      {{ page.title }} - 
+    {% else %}
+      {% if page.type == 'tag' %}Tag: {{ page.term }} - {% endif %}
+      {% if page.type == 'category' %}Category: {{ page.term }} - {% endif %}
+      {% if page.type == 'yearly' %}Year: {{ page.date | date("Y") }} - {% endif %}
+      {% if page.type == 'monthly' %}Month: {{ page.date | date("F Y") }} - {% endif %}
+      {% if page.type == 'daily' %}Date: {{ page.date | date("j F Y") }} - {% endif %}
+      {% if page.currentPage and page.currentPage != 1 %}Page {{ page.currentPage }} - {% endif %}
+    {% endif %}
+    {{ site.title }}
+    </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/blog.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item" href="/">Home</a>
+          <a class="blog-nav-item" href="/about/">About</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title">{{ site.title }}</h1>
+        <p class="lead blog-description">{{ site.description }}</p>
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+        {% block content %}{% endblock %}
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>{{ site.about | safe }}</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Categories</h4>
+            <ol class="list-unstyled">
+              {% for cat in site.data.categoriesIndex %}
+              <li><a href="/category/{{ cat.slug }}/">{{ cat.term }}</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Archives</h4>
+            <ol class="list-unstyled">
+              {% for archive in site.data.monthlyIndex %}
+              <li><a href="/date/{{ archive.slug }}/">{{ archive.date | date('F Y') }}</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              {% for name, link in site.links %}
+              <li><a href="{{ link }}">{{ name }}</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <div class="blog-footer">
+      <p>&copy; {{ site.title }}. Blog made on <a href="#">Alleluia</a> by <a href="#">Alex7Kom</a>, template built on <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </div>
+
+  </body>
+</html>
